@@ -11,21 +11,27 @@ export default class Store {
     houses: IHouse[] = [];
     isAuth = !!localStorage.getItem('token');
     isLoading = false;
+
     constructor() {
         makeAutoObservable(this)
     }
+
     setAuth(bool: boolean) {
         this.isAuth = bool;
     }
+
     setUser(user: IUser) {
         this.user = user;
     }
+
     setIsLoading(bool: boolean) {
         this.isLoading = bool;
     }
+
     setHouses(houses: IHouse[]) {
         this.houses = houses;
     }
+
     async withLoading<T>(promise: Promise<T>): Promise<T> {
         try {
             this.setIsLoading(true);
@@ -34,6 +40,7 @@ export default class Store {
             this.setIsLoading(false);
         }
     }
+
     async registration(name: string, email: string, phone:string, password: string, know_about_us: string) {
         try {
             return await this.withLoading(AuthService.registration(name, email, phone, password, know_about_us));
@@ -41,6 +48,7 @@ export default class Store {
             console.log(e);
         }
     }
+
     async login(email: string, password: string) {
         try {
             const response = await this.withLoading(AuthService.login(email, password));
@@ -65,6 +73,7 @@ export default class Store {
     async getClient() {
         try {
             const response = await this.withLoading(UserService.getClient());
+            console.log(response);
             this.setUser(response.data);
         } catch (e) {
             console.log(e);
@@ -76,6 +85,7 @@ export default class Store {
         try {
             const response = await this.withLoading(HouseService.getHouses());
             this.setHouses(response.data);
+            console.log(response.data);
         } catch (e) {
             console.log(e);
         }

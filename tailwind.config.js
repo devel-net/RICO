@@ -19,6 +19,7 @@ module.exports = {
             'orange': '#FF9331',
             'dark-blue-2': '#091024',
             'primary-link': '#0088D1',
+            'dark-footer': '#020A20'
         },
         fontFamily: {
             'sans': ['Comfort'],

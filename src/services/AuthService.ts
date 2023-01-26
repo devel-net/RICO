@@ -4,7 +4,7 @@ import {AuthResponse} from "../models/response/AuthResponse";
 import IUser from "../models/IUser";
 export default class AuthService {
     static async login(username: string, password: string): Promise<AxiosResponse<AuthResponse>> {
-        return $api.post<AuthResponse>('/api/v1/authorization/token/', {username, password})
+        return axios.post<AuthResponse>(`${API_URL}/api/v1/authorization/login/`, {username, password})
             .then(response => {
                 localStorage.setItem('token', response.data.access);
                 return response;
@@ -20,6 +20,7 @@ export default class AuthService {
             .then(response => {
                 localStorage.removeItem('token');
                 localStorage.removeItem('refresh');
+                console.log(response);
                 return response;
             });
     }

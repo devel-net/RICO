@@ -29,7 +29,7 @@ const Login = () => {
                     <img src={require('../../assets/icons/eye-pass.png')} alt="eye-pass"/>
                     <p className="underline">show password</p>
                 </div>
-                <button className="w-1/2 p-2 my-2 rounded-md bg-primary bg-green mt-2">Login</button>
+                <button className="w-1/2 p-2 my-2 rounded-md bg-green mt-2">Login</button>
                 <p>Have a good deal!</p>
                 {/*<p className="text-center text-sm mt-6">If you dont have account*/}
                 {/*    <p className="cursor-pointer underline">register please</p></p>*/}

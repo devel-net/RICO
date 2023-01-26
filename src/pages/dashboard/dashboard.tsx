@@ -6,6 +6,7 @@ import AddProperties from "../../components/dashboard/AddProperties";
 import {observer} from "mobx-react-lite";
 import {Context} from "../../index";
 import {useNavigate} from "react-router";
+import Footer from "../../components/footer";
 
 const Dashboard = () => {
     const {store} = useContext(Context);
@@ -16,26 +17,35 @@ const Dashboard = () => {
         }
     },[localStorage.getItem('refresh')]);
     useEffect(() => {
-        //store.checkAuth();
-        store.getClient();
+        (async () => {
+            await store.getClient();
+            await store.getHouses();
+        })()
     }, []);
     return (
-        <div className="py-12 bg-dark-blue-2 lg:gap-24 sm:gap-2 lg:px-32  sm:px-8">
-            {!store.isLoading ?
-                <>
-                <Navbar />
-                    <div className="flex gap-12 mt-12 lg:flex-row phone:items-center lg:items-start lg:px-24 lg:gap-48 sm:px-12 phone:flex-col">
-                        <Account />
-                        <Statistics />
-                    </div>
-                    <div className="flex gap-12 mt-12 lg:flex-row lg:justify-start lg:px-24 sm:px-12 sm:flex-col phone:flex-col-reverse phone:items-center lg:items-start">
-                        <AddProperties />
-                    </div>
-                </> : <div className="flex flex-col items-center justify-center h-screen bg-dark-blue-2 text-primary">
-                    <h1 className="text-4xl font-light mb-8">Loading...</h1>
+        <>
+        {!store.isLoading ?
+            <>
+                <div className="py-12 bg-dark-blue-2 lg:gap-24 sm:gap-2 lg:px-32  sm:px-8">
+                    <>
+                        <Navbar/>
+                        <div
+                            className="flex gap-12 mt-12 lg:flex-row phone:items-center lg:items-start lg:px-24 lg:gap-48 sm:px-12 phone:flex-col">
+                            <Account/>
+                            <Statistics/>
+                        </div>
+                        <div
+                            className="flex gap-12 mt-12 lg:flex-row lg:justify-start lg:px-24 sm:px-12 sm:flex-col phone:flex-col-reverse phone:items-center lg:items-start">
+                            <AddProperties/>
+                        </div>
+                    </>
                 </div>
-            }
-        </div>
+                <Footer/>
+            </>
+            : <div className="flex flex-col items-center justify-center h-screen bg-dark-blue-2 text-primary">
+                <h1 className="text-4xl font-light mb-8">Loading...</h1>
+                </div>}
+            </>
     );
 };
 
