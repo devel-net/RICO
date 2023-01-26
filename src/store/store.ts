@@ -1,5 +1,5 @@
 import IUser from "../models/IUser";
-import {makeAutoObservable} from "mobx";
+import {computed, makeAutoObservable, observable} from "mobx";
 import AuthService from "../services/AuthService";
 
 import UserService from "../services/UserService";
@@ -7,6 +7,7 @@ import HouseService from "../services/HouseService";
 import IHouse from "../models/IHouse";
 
 export default class Store {
+
     user: IUser | null = null;
     houses: IHouse[] = [];
     isAuth = !!localStorage.getItem('token');
