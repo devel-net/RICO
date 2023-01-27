@@ -11,7 +11,6 @@ const Login = () => {
     const [password, setPassword] = useState('');
 
     const {store} = useContext(Context);
-
     const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         store.login(email, password).then(()=> navigate('/dashboard'));
@@ -27,7 +26,7 @@ const Login = () => {
                 <input type={pwdSelector ? "password": "text"} className="w-full p-2 my-2 rounded-md bg-light-blue font-light" onChange={(e)=>setPassword(e.target.value)}/>
                 <div className="flex text-primary-shutted flex-row gap-2 w-full cursor-pointer" onClick={()=>setPwdSelector(prevState => !prevState)}>
                     <img src={require('../../assets/icons/eye-pass.png')} alt="eye-pass"/>
-                    <p className="underline">show password</p>
+                    <p className="underline select-none">show password</p>
                 </div>
                 <button className="w-1/2 p-2 my-2 rounded-md bg-green mt-2">Login</button>
                 <p>Have a good deal!</p>

@@ -3,8 +3,6 @@ import Step from "../../components/dashboard/AddInstance/Step";
 import Select from "react-select";
 import Footer from "../../components/footer";
 import Selection from "../../components/dashboard/AddInstance/Selection";
-import Star from '../../assets/icons/star.svg';
-import {ReactDOM} from "react";
 
 const AddInstance = () => {
     const [nextStepForConfirm, setNextStepForConfirm] = React.useState(0);
