@@ -54,10 +54,31 @@ const Dashboard = () => {
                                     </div>
                                 </>
                          :
-                        <div
-                            className="flex gap-12 mt-12 lg:flex-row phone:items-center lg:items-start lg:px-24 lg:gap-48 sm:px-12 phone:flex-col">
+                        <div className="flex gap-12 mt-32 justify-between lg:flex-row phone:items-center lg:items-start lg:px-48 sm:px-12 phone:flex-col">
+                            <div className='flex flex-col'>
+                                <p className="text-3xl font-medium text-white">Login your agency</p>
+                                <p className='font-light text-primary-shutted mt-2'>Welcome back :)</p>
 
-                            <p>Accout of Agency</p>
+                                <div className='flex flex-col gap-4 mt-4'>
+                                    <p className={'text-md font-bold'}>Login</p>
+                                    <input className={'w-96 h-10 rounded-xl bg-dark-blue px-4'}/>
+                                </div>
+                                <div className='flex flex-col gap-4 mt-4'>
+                                    <p className={'text-md font-bold'}>Password</p>
+                                    <input className={'w-96 h-10 rounded-xl bg-dark-blue px-4'}/>
+                                </div>
+                                <div className='flex justify-center mt-4'>
+                                    <button className='w-48 h-10 rounded-xl bg-green mt-4'>Log in</button>
+                                </div>
+                            </div>
+                            <div className={'flex flex-col gap-6'}>
+                                <p className="text-3xl font-medium text-white">Register your<br />agency</p>
+                                <p className='font-light text-primary-shutted'>Dont have account of your agency <br />on rico.com ?</p>
+
+                                <div className='flex'>
+                                    <button className='w-48 h-10 rounded-xl bg-green'>Register</button>
+                                </div>
+                            </div>
                         </div>}
 
                     </>
