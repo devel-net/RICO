@@ -1,16 +1,67 @@
-import React, {ChangeEvent, useState} from 'react';
+import React, {ChangeEvent, useContext, useState} from 'react';
 import Step from "../../components/dashboard/AddInstance/Step";
 import Select from "react-select";
 import Footer from "../../components/footer";
 import Selection from "../../components/dashboard/AddInstance/Selection";
+import {Context} from "../../index";
+import IHouse from "../../models/IHouse";
 
 const AddInstance = () => {
+    const {store} = useContext(Context);
+    const [data, setData] = useState<IHouse>({
+        id: 0,
+        time_created: '',
+        time_updated: '',
+        operation: '',
+        name_roads: '',
+        number_house: '',
+        plant: '',
+        max_plant: 0,
+        phone_number: '',
+        whatsapp: null,
+        link_offer: null,
+        link_site_company: null,
+        status: '',
+        m2_build: 0,
+        m2_useful: 0,
+        many_rooms: 1,
+        many_bathrooms_and_toilets: 1,
+        reduced_mobility: false,
+        price: 0,
+        deposit: null,
+        description: '',
+        photos: [],
+    });
+    console.log(data);
+    const [isLink, setIsLink] = useState(false);
+    const [imSelf, setImSelf] = useState(false);
+    const [specifyFloor, setSpecifyFloor] = useState(false);
+
+    const houseRooms = (type: string) => {
+        switch (type) {
+            case 'increment':
+                if (data.many_rooms < 25 ) {
+                    setData({...data, many_rooms: data.many_rooms + 1})
+                }
+                break;
+            case 'decrement':
+                if(data.many_rooms > 1){
+                    setData({...data, many_rooms: data.many_rooms - 1});
+                }
+                break;
+            default: return;
+        }
+    }
+    const handleDataToUpload = async () => {
+        const localData = new FormData();
+        localData.append('operation', data.operation);
+        await store.addHouse(localData);
+    }
     const [nextStepForConfirm, setNextStepForConfirm] = React.useState(0);
     const [stage, setStage] = React.useState(0);
 
     const [files, setFiles] = useState<File[]>([]);
 
-    console.log(files);
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
             for (let i = 0; i < e.target.files.length; i++) {
@@ -20,8 +71,25 @@ const AddInstance = () => {
     };
 
     const onChangeValues = (e: any) => {
-        console.log(e);
+        //console.log(e);
     }
+
+    const BathToilets = (type: string) => {
+        switch (type) {
+            case 'increment':
+                if (data.many_bathrooms_and_toilets < 10 ) {
+                    setData({...data, many_bathrooms_and_toilets: data.many_bathrooms_and_toilets + 1})
+                }
+                break;
+            case 'decrement':
+                if(data.many_bathrooms_and_toilets > 1){
+                    setData({...data, many_bathrooms_and_toilets: data.many_bathrooms_and_toilets - 1});
+                }
+                break;
+            default: return;
+        }
+    }
+
     return (
         <div>
             <div className="container flex flex-col w-screen mx-32 my-12">
@@ -57,19 +125,23 @@ const AddInstance = () => {
                                 <div className="mt-12">
                                     <label className="font-bold text-2xl mt-12">Contact of this property</label>
                                     <div className="flex flex-row gap-8">
-                                        <input type="text" placeholder="number of phone" className="w-1/3 mt-4 px-4 py-2 bg-dark-blue rounded-md"/>
-                                        <input type="text" placeholder="whatsapp" className="w-1/3 mt-4 px-4 py-2 bg-dark-blue rounded-md"/>
+                                        <input type="text" placeholder="number of phone" className="w-1/3 mt-4 px-4 py-2 bg-dark-blue rounded-md" onChange={(e)=> setData({...data, phone_number: e.target.value})}/>
+                                        <input type="text" placeholder="whatsapp" className="w-1/3 mt-4 px-4 py-2 bg-dark-blue rounded-md" onChange={(e)=> setData( {...data, whatsapp: e.target.value})}/>
 
                                     </div>
                                 </div>
                                 <div className="flex flex-col">
                                     <label className="font-bold text-xl mt-12">Link of offer</label>
                                     <div className="flex flex-row mt-4 gap-x-8">
-                                        <input type="text" placeholder="for example from idealista.com" className="w-1/2 px-4 py-2 bg-dark-blue rounded-md"/>
+                                        <input type="text" placeholder="for example from idealista.com" className={`w-1/2 px-4 py-2 bg-dark-blue rounded-md ${isLink && 'text-primary-shutted brightness-50'}`} disabled={isLink}/>
                                         <div className="flex flex-row gap-x-4 items-center">
                                             <input type="radio" id="rent" name="operation" value="rent" className="hidden"/>
-                                            <label htmlFor="rent" className="flex items-center cursor-pointer">
+                                            <label htmlFor="rent" className="flex items-center cursor-pointer" onClick={()=>setIsLink(prevState => !prevState)}>
+                                                {isLink ?
                                                 <span className="w-6 h-6 inline-block mr-2 rounded-full border-4 border-dark-blue bg-light-blue"></span>
+                                                    :
+                                                <span className="w-6 h-6 inline-block mr-2 rounded-full border-4 border-dark-blue bg-dark-blue"></span>
+                                                }
                                             </label>
                                             <p>dont have the link</p>
                                         </div>
@@ -78,25 +150,33 @@ const AddInstance = () => {
                                 <div className="flex flex-col">
                                     <label className="font-bold text-xl mt-12">Link of site realty company</label>
                                     <div className="flex flex-row mt-4 gap-x-8">
-                                        <input type="text" placeholder="for example from idealista.com" className="w-1/2 px-4 py-2 bg-dark-blue rounded-md"/>
+                                        <input type="text" placeholder="for example from idealista.com" className={`w-1/2 px-4 py-2 bg-dark-blue rounded-md ${imSelf && 'text-primary-shutted brightness-50'}`} disabled={imSelf}/>
                                         <div className="flex flex-row gap-x-4 items-center">
                                             <input type="radio" id="rent" name="operation" value="rent" className="hidden"/>
-                                            <label htmlFor="rent" className="flex items-center cursor-pointer">
-                                                <span className="w-6 h-6 inline-block mr-2 rounded-full border-4 border-dark-blue bg-light-blue"></span>
+                                            <label htmlFor="rent" className="flex items-center cursor-pointer" onClick={()=>setImSelf(prevState => !prevState)}>
+                                                {imSelf ?
+                                                    <span className="w-6 h-6 inline-block mr-2 rounded-full border-4 border-dark-blue bg-light-blue"></span>
+                                                    :
+                                                    <span className="w-6 h-6 inline-block mr-2 rounded-full border-4 border-dark-blue bg-dark-blue"></span>
+                                                }
                                             </label>
                                             <p>I’m self</p>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="flex justify-center items-center bg-orange py-2 px-4 rounded-md w-1/4 mt-16"
-                                onClick={()=> setStage(2)}>
+                                onClick={()=> {
+                                    if(data.phone_number !== '' && data.whatsapp !== '') {
+                                        setStage(2);
+                                    }
+                                }}>
                                     <p className="font-bold">go next step</p>
                                 </div>
                             </div>
                             :
                             <>
                                 <div className="flex gap-2 flex-col gap-4">
-                                    <label className="">Choose the type of property</label>
+                                    <label className="text-xl mb-6">Choose the type of property</label>
                                     <Select
                                         className={"w-1/2"}
                                         placeholder={'Comertial'}
@@ -105,7 +185,7 @@ const AddInstance = () => {
                                             {value: '2', label: 'Privat'},
                                         ]}
                                         onChange={(values) => {
-                                            console.log(values);
+                                            //console.log(values);
                                         }}
                                         isSearchable={false}
                                         styles={{
@@ -164,41 +244,7 @@ const AddInstance = () => {
                                         }}
                                     />
                                 </div>
-                                <div className="flex gap-2 flex-col gap-6">
-                                    <label className="">Operation</label>
-                                    <div className="flex">
-                                        {/*styled radio buttons*/}
-                                        <div className="flex flex-col gap-4">
-
-                                            <div className="flex flex-row gap-x-4">
-                                                <input type="radio" id="sale" name="operation" value="sale" className="hidden"/>
-                                                <label htmlFor="sale" className="flex items-center cursor-pointer">
-                                                    <span className="w-6 h-6 inline-block mr-2 rounded-full bg-dark-blue"></span>
-                                                </label>
-                                                <p>Sale</p>
-                                            </div>
-
-                                            <div className="flex flex-row gap-x-4">
-                                                <input type="radio" id="rent" name="operation" value="rent" className="hidden"/>
-                                                <label htmlFor="rent" className="flex items-center cursor-pointer">
-                                                    <span className="w-6 h-6 inline-block mr-2 rounded-full border-4 border-dark-blue bg-light-blue"></span>
-                                                </label>
-                                                <p>Rent</p>
-                                            </div>
-
-
-                                            <div className="flex flex-row gap-x-4">
-                                                <input type="radio" id="3d-app" name="operation" value="3d-app" className="hidden"/>
-                                                <label htmlFor="3d-app" className="flex items-center cursor-pointer">
-                                                    <span className="w-6 h-6 inline-block mr-2 rounded border-4 border-dark-blue bg-light-blue "></span>
-                                                </label>
-                                                <p>Add 3d app</p>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                                <h3 className='text-3xl'>Location of the property</h3>
+                                <h3 className='text-xl'>Location of the property</h3>
                                 <div className="flex flex-col gap-y-4">
                                     <label className="">City</label>
                                     <Select
@@ -209,7 +255,7 @@ const AddInstance = () => {
                                             {value: '2', label: 'Madrid, Spain'},
                                         ]}
                                         onChange={(values) => {
-                                            console.log(values);
+                                            //console.log(values);
                                         }}
                                         isSearchable={false}
                                         styles={{
@@ -270,16 +316,18 @@ const AddInstance = () => {
                                 </div>
                                 <div className="flex flex-col gap-y-4">
                                     <label className="">Name of the road</label>
-                                    <input type="text" className="w-1/2 bg-dark-blue h-10 px-2 rounded-md"/>
+                                    <input type="text" className={`w-1/2 bg-dark-blue h-10 px-2 rounded-md`}/>
                                 </div>
                                 <div className="flex flex-col gap-y-4">
                                     <label className="">Number of build</label>
                                     <div className='flex flex-row items-center gap-x-6'>
-                                        <input type="text" className="w-1/4 bg-dark-blue h-10 px-2 rounded-md"/>
+                                        <input type="text" className={`w-1/4 bg-dark-blue h-10 px-2 rounded-md ${specifyFloor && 'text-primary-shutted brightness-50'}`} disabled={specifyFloor}/>
                                         <div className="flex flex-row">
                                             <input type="radio" id="rent" name="operation" value="rent" className="hidden"/>
-                                            <label htmlFor="rent" className="flex items-center cursor-pointer">
-                                                <span className="w-6 h-6 inline-block mr-2 rounded-full border-4 border-dark-blue bg-light-blue"></span>
+                                            <label htmlFor="rent" className="flex items-center cursor-pointer" onClick={()=>setSpecifyFloor(prevState => !prevState)}>
+                                                { specifyFloor ? <span className="w-6 h-6 inline-block mr-2 rounded-full border-4 border-dark-blue bg-light-blue"></span>
+                                                    :
+                                                    <span className="w-6 h-6 inline-block mr-2 rounded-full border-4 border-dark-blue bg-dark-blue"></span> }
                                             </label>
                                             <p>
                                                 I don't want to specify the floor
@@ -342,7 +390,7 @@ const AddInstance = () => {
                     {/*properties for sale of more than €1,000,000*/}
                     {/*properties for rent of more than €2,000/month*/}
                 </div> : stage === 2 ?
-                <div className="mx-48 mt-16 flex flex-col">
+                <div className="mx-48 mt-16 flex flex-col select-none">
                     <p className='text-xl font-bold'>Characteristics of the apartment</p>
 
                     <p className='text-md mt-6 font-normal'>Status</p>
@@ -384,22 +432,22 @@ const AddInstance = () => {
 
                     <p className='text-md mt-6 font-normal mb-2'>Number of rooms in the house</p>
                     <div className='flex flex-row bg-dark-blue rounded-xl w-36 h-12 items-center justify-between'>
-                        <div className='flex w-12 h-12 bg-light-blue rounded-xl items-center justify-center cursor-pointer hover:brightness-50'>
+                        <div className='flex w-12 h-12 bg-light-blue rounded-xl items-center justify-center cursor-pointer hover:brightness-50' onClick={()=>houseRooms('increment')}>
                             <p className='font-medium text-3xl select-none'>+</p>
                         </div>
-                        <p className='font-bold select-none'>2</p>
-                        <div className='flex w-12 h-12 bg-light-blue rounded-xl items-center justify-center cursor-pointer hover:brightness-50'>
+                        <p className='font-bold select-none'>{data.many_rooms}</p>
+                        <div className='flex w-12 h-12 bg-light-blue rounded-xl items-center justify-center cursor-pointer hover:brightness-50' onClick={()=>houseRooms('decrement')}>
                             <p className='font-medium text-3xl select-none'>-</p>
                         </div>
                     </div>
 
                     <p className='text-md mt-6 font-normal mb-2'>Number of bathrooms and toilets</p>
                     <div className='flex flex-row bg-dark-blue rounded-xl w-36 h-12 items-center justify-between'>
-                        <div className='flex w-12 h-12 bg-light-blue rounded-xl items-center justify-center cursor-pointer hover:brightness-50'>
+                        <div className='flex w-12 h-12 bg-light-blue rounded-xl items-center justify-center cursor-pointer hover:brightness-50' onClick={()=>BathToilets('increment')}>
                             <p className='font-medium text-3xl select-none'>+</p>
                         </div>
-                        <p className='font-bold select-none'>2</p>
-                        <div className='flex w-12 h-12 bg-light-blue rounded-xl items-center justify-center cursor-pointer hover:brightness-50'>
+                        <p className='font-bold select-none'>{data.many_bathrooms_and_toilets}</p>
+                        <div className='flex w-12 h-12 bg-light-blue rounded-xl items-center justify-center cursor-pointer hover:brightness-50' onClick={()=>BathToilets('decrement')}>
                             <p className='font-medium text-3xl select-none'>-</p>
                         </div>
                     </div>
@@ -535,16 +583,72 @@ const AddInstance = () => {
                                                         </div>
                                                     </div>
                                                     <Selection options={[
-                                                        {value: 'Living room', label: 'Living room'},
+                                                        {
+                                                            value: 'Bed-room', label: 'Bed-room'
+                                                        },
+                                                        {
+                                                            value: 'Bath-room', label: 'Bath-room'
+                                                        },
+                                                        {
+                                                            value: 'Living-room', label: 'Living-room'
+                                                        },
+                                                        {
+                                                            value: 'Sitting-room', label: 'Sitting-room'
+                                                        },
+                                                        {
+                                                            value: 'Study', label: 'Study'
+                                                        },
+                                                        {
+                                                            value: 'Kitchen', label: 'Kitchen'
+                                                        },
+                                                        {
+                                                            value: 'Dining-room', label: 'Dining-room'
+                                                        },
+                                                        {
+                                                            value: 'Hall', label: 'Hall'
+                                                        },
+                                                        {
+                                                            value: 'Corridor', label: 'Corridor'
+                                                        },
+                                                        {
+                                                            value: 'Attic', label: 'Attic'
+                                                        },
+                                                        {
+                                                            value: 'Basement', label: 'Basement'
+                                                        },
+                                                        {
+                                                            value: 'Cellar', label: 'Cellar'
+                                                        },
+                                                        {
+                                                            value: 'Yard', label: 'Yard'
+                                                        },
+                                                        {
+                                                            value: 'Garage', label: 'Garage'
+                                                        },
+                                                        {
+                                                            value: 'Garden', label: 'Garden'
+                                                        },
+
+
                                                     ]} onChange={onChangeValues} className={'w-56'} />
                                                 </div>
                                             )
                                     })
                                 }
                             </div>
+                            <div className='flex mb-12 mt-12'>
+                                <div className='flex items-center px-8 py-2 rounded-md cursor-pointer bg-green' onClick={handleDataToUpload}>
+                                    <p>Publish your add</p>
+                                </div>
+                            </div>
+                            <p>
+                                40 photos of up to 32 megabytes each (gif, jpeg, png) <br />
+                                6 videos of up to 600 megabytes, valid formats: avi, mov, wmv, mpeg, rm, mp4, flv, m2t, and 3gp<br /> (mobile videos)
+                            </p>
                         </div>
                     }
                 </div>}
+
             </div>
             <Footer />
         </div>

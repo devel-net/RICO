@@ -1,4 +1,4 @@
-export default interface IHouseImage {
+interface IHouseImage {
     room: string;
     url: string;
 }
@@ -20,7 +20,7 @@ export default interface IHouse {
     m2_useful: number;
     many_rooms: number;
     many_bathrooms_and_toilets: number;
-    reduced_mobility: string;
+    reduced_mobility: boolean;
     price: number;
     deposit: number | null;
     description: string;

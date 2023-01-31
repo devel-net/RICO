@@ -3,7 +3,6 @@ import React from 'react';
 //rsc with props
 const Step = (props: any) => {
     const {currentProps} = props;
-    console.log(currentProps);
     return (
                 <div className="flex w-full rounded-2xl flex-row justify-between items-center px-48 select-none">
                     {currentProps === 0 ?

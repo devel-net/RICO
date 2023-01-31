@@ -1,5 +1,5 @@
 import IUser from "../models/IUser";
-import {computed, makeAutoObservable, observable} from "mobx";
+import {makeAutoObservable} from "mobx";
 import AuthService from "../services/AuthService";
 
 import UserService from "../services/UserService";
@@ -85,7 +85,16 @@ export default class Store {
     async getHouses() {
         try {
             const response = await this.withLoading(HouseService.getHouses());
-            this.setHouses(response.data);
+            // @ts-ignore
+            this.setHouses(response.data.results);
+            console.log(response.data);
+        } catch (e) {
+            console.log(e);
+        }
+    }
+    async addHouse(house: FormData) {
+        try {
+            const response = await this.withLoading(HouseService.addHouse(house));
             console.log(response.data);
         } catch (e) {
             console.log(e);
